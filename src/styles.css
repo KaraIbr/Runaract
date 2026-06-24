@@ -1,0 +1,185 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@import "@fontsource/comfortaa/400.css";
+@import "@fontsource/comfortaa/500.css";
+@import "@fontsource/comfortaa/600.css";
+@import "@fontsource/comfortaa/700.css";
+@import "@fontsource/rubik/300.css";
+@import "@fontsource/rubik/400.css";
+@import "@fontsource/rubik/500.css";
+@import "@fontsource/rubik/600.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-display: "Comfortaa", system-ui, sans-serif;
+  --font-body: "Rubik", system-ui, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-run-orange: var(--run-orange);
+  --color-run-blue: var(--run-blue);
+  --color-run-gray: var(--run-gray);
+  --color-run-beige: var(--run-beige);
+  --color-ink: var(--ink);
+}
+
+:root {
+  --radius: 1rem;
+
+  /* Brand */
+  --run-orange: oklch(0.68 0.18 38);     /* #E85C28 */
+  --run-blue: oklch(0.27 0.08 268);      /* #1A2B56 */
+  --run-gray: oklch(0.96 0 0);           /* #F2F2F2 */
+  --run-beige: oklch(0.96 0.018 80);     /* clear beige */
+  --ink: oklch(0.14 0.01 270);
+
+  --background: var(--run-beige);
+  --foreground: var(--ink);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--ink);
+  --popover: oklch(1 0 0);
+  --popover-foreground: var(--ink);
+  --primary: var(--run-orange);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: var(--run-blue);
+  --secondary-foreground: oklch(0.99 0 0);
+  --muted: oklch(0.94 0.005 80);
+  --muted-foreground: oklch(0.45 0.01 270);
+  --accent: var(--run-blue);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.6 0.22 27);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(0.88 0.01 80);
+  --input: oklch(0.88 0.01 80);
+  --ring: var(--run-orange);
+
+  /* Gradients & shadows */
+  --gradient-hero: linear-gradient(180deg, transparent 30%, oklch(0.14 0.01 270 / 0.85) 100%);
+  --gradient-orange: linear-gradient(135deg, oklch(0.72 0.19 38), oklch(0.6 0.2 28));
+  --shadow-editorial: 0 30px 60px -25px oklch(0.14 0.01 270 / 0.35);
+  --shadow-card: 0 1px 0 oklch(0 0 0 / 0.04), 0 12px 32px -16px oklch(0.14 0.01 270 / 0.18);
+
+  --tracking-tight: -0.04em;
+}
+
+.dark {
+  --background: var(--ink);
+  --foreground: oklch(0.97 0 0);
+  --card: oklch(0.2 0.02 270);
+  --card-foreground: oklch(0.97 0 0);
+  --muted: oklch(0.22 0.02 270);
+  --muted-foreground: oklch(0.7 0.02 270);
+  --border: oklch(1 0 0 / 0.1);
+  --input: oklch(1 0 0 / 0.15);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    letter-spacing: var(--tracking-tight);
+    font-weight: 700;
+  }
+
+  ::selection {
+    background: var(--run-orange);
+    color: white;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: var(--font-display); }
+  .font-body { font-family: var(--font-body); }
+  .text-balance { text-wrap: balance; }
+  .text-pretty { text-wrap: pretty; }
+
+  .editorial-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.05em;
+    line-height: 0.88;
+  }
+
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+  }
+
+  .polaroid {
+    position: relative;
+    background: white;
+    padding: 0.75rem 0.75rem 3.5rem 0.75rem;
+    box-shadow: 0 8px 24px oklch(0 0 0 / 0.12), 0 2px 6px oklch(0 0 0 / 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .polaroid:hover {
+    transform: translateY(-4px) rotate(0deg) !important;
+    box-shadow: 0 16px 48px oklch(0 0 0 / 0.18), 0 4px 12px oklch(0 0 0 / 0.1);
+  }
+
+  .polaroid img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+
+  .polaroid-label {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+    opacity: 0.6;
+    text-transform: uppercase;
+  }
+}
