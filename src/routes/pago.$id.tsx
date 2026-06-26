@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ChevronLeft, CreditCard, Building, Upload, CheckCircle } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, CreditCard, Building, Upload, CheckCircle, DollarSign } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -25,7 +25,7 @@ type ParticipantInfo = {
   race_categories?: { name: string; distance_km: number } | null;
 };
 
-type PaymentMethod = "mercadopago_card" | "mercadopago_spei" | "transferencia";
+type PaymentMethod = "transferencia" | "efectivo";
 
 const DISTANCE_LABELS: Record<number, string> = { 3: "3K", 5: "5K", 10: "10K" };
 
@@ -42,6 +42,7 @@ function PagoPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
+  const [distanceKm, setDistanceKm] = useState<number>(0);
 
   useEffect(() => {
     const fetchParticipant = async () => {
@@ -52,6 +53,18 @@ function PagoPage() {
         .single();
       if (data) {
         setParticipant(data as unknown as ParticipantInfo);
+        const p = data as unknown as ParticipantInfo;
+        const km = p.race_categories?.distance_km;
+        if (km) {
+          setDistanceKm(km);
+        } else {
+          const { data: cat } = await supabase
+            .from("race_categories")
+            .select("distance_km")
+            .eq("id", p.category_id)
+            .single();
+          setDistanceKm(cat?.distance_km ?? 0);
+        }
       } else {
         navigate({ to: "/" });
       }
@@ -59,8 +72,6 @@ function PagoPage() {
     };
     fetchParticipant();
   }, [id, navigate]);
-
-  const distanceKm = participant?.race_categories?.distance_km ?? 3;
   const price = distanceKm === 3 ? prices["3k"] : distanceKm === 5 ? prices["5k"] : prices["10k"];
   const distanceLabel = DISTANCE_LABELS[distanceKm] ?? `${distanceKm}K`;
 
@@ -74,7 +85,7 @@ function PagoPage() {
     setError(null);
 
     try {
-      if (method === "transferencia") {
+      if (method === "transferencia" || method === "efectivo") {
         let receiptUrl: string | null = null;
 
         if (receiptFile) {
@@ -91,7 +102,7 @@ function PagoPage() {
         const { error: pErr } = await supabase.from("payments").insert({
           participant_id: id,
           amount: price,
-          payment_method: "transferencia",
+          payment_method: method,
           payment_status: "review",
           receipt_url: receiptUrl,
         });
@@ -104,9 +115,6 @@ function PagoPage() {
         }
 
         setSuccess(true);
-      } else {
-        // Mercado Pago placeholder — integrate with Access Token + Public Key
-        setError("Mercado Pago no está habilitado aún. Por ahora selecciona transferencia bancaria.");
       }
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Error al procesar el pago.");
@@ -140,7 +148,7 @@ function PagoPage() {
             sea aprobado y tu folio esté asignado.
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Si elegiste transferencia, el equipo validará tu comprobante en un plazo de 24-48 hrs.
+            El equipo validará tu comprobante en un plazo de 24-48 hrs.
           </p>
           <Link
             to="/"
@@ -199,33 +207,31 @@ function PagoPage() {
           <Label className="text-sm font-semibold">Método de pago</Label>
 
           <button
-            onClick={() => setMethod("mercadopago_card")}
-            className={`flex w-full items-center gap-4 rounded-2xl border p-5 text-left transition ${
-              method === "mercadopago_card"
-                ? "border-run-orange bg-run-orange/5 ring-1 ring-run-orange"
-                : "border-border bg-white hover:border-run-orange/40"
-            }`}
+            disabled
+            className="flex w-full items-center gap-4 rounded-2xl border border-border bg-white/50 p-5 text-left opacity-60 cursor-not-allowed"
           >
             <CreditCard className="h-6 w-6 text-run-blue shrink-0" />
             <div className="flex-1">
               <p className="font-semibold text-run-blue">Mercado Pago — Tarjeta</p>
               <p className="text-xs text-muted-foreground">Débito o crédito. Pago inmediato.</p>
             </div>
+            <span className="border border-border rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Próximamente
+            </span>
           </button>
 
           <button
-            onClick={() => setMethod("mercadopago_spei")}
-            className={`flex w-full items-center gap-4 rounded-2xl border p-5 text-left transition ${
-              method === "mercadopago_spei"
-                ? "border-run-orange bg-run-orange/5 ring-1 ring-run-orange"
-                : "border-border bg-white hover:border-run-orange/40"
-            }`}
+            disabled
+            className="flex w-full items-center gap-4 rounded-2xl border border-border bg-white/50 p-5 text-left opacity-60 cursor-not-allowed"
           >
             <Building className="h-6 w-6 text-run-blue shrink-0" />
             <div className="flex-1">
               <p className="font-semibold text-run-blue">Mercado Pago — SPEI</p>
               <p className="text-xs text-muted-foreground">Transferencia instantánea vía Mercado Pago.</p>
             </div>
+            <span className="border border-border rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Próximamente
+            </span>
           </button>
 
           <button
@@ -243,6 +249,21 @@ function PagoPage() {
             </div>
           </button>
 
+          <button
+            onClick={() => setMethod("efectivo")}
+            className={`flex w-full items-center gap-4 rounded-2xl border p-5 text-left transition ${
+              method === "efectivo"
+                ? "border-run-orange bg-run-orange/5 ring-1 ring-run-orange"
+                : "border-border bg-white hover:border-run-orange/40"
+            }`}
+          >
+            <DollarSign className="h-6 w-6 text-run-blue shrink-0" />
+            <div className="flex-1">
+              <p className="font-semibold text-run-blue">Efectivo</p>
+              <p className="text-xs text-muted-foreground">Paga con nuestros representantes oficiales.</p>
+            </div>
+          </button>
+
           {method === "transferencia" && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
@@ -252,10 +273,32 @@ function PagoPage() {
               <p className="mb-2 text-sm font-medium text-run-blue">Datos para transferencia</p>
               <div className="mb-4 space-y-1 text-xs text-muted-foreground">
                 <p><strong>Banco:</strong> STP (Sistema de Transferencias y Pagos)</p>
-                <p><strong>CLABE:</strong> 64601 123456789012</p>
-                <p><strong>Beneficiario:</strong> Runnaract 2.0 / Zitara Eventos</p>
+                <p><strong>CLABE:</strong>638180000030326402
+</p>
+                <p><strong>Beneficiario:</strong> Ivanna Vazquez </p>
                 <p><strong>Monto exacto:</strong> ${price} MXN</p>
                 <p><strong>Referencia:</strong> RUNN-{id.slice(0, 8).toUpperCase()}</p>
+              </div>
+              <Label className="mb-1.5 block text-sm font-medium">Sube tu comprobante (PDF o imagen)</Label>
+              <InputFile onChange={handleReceiptUpload} />
+              {receiptFile && (
+                <p className="mt-1.5 text-xs text-green-600">{receiptFile.name} seleccionado</p>
+              )}
+            </motion.div>
+          )}
+
+          {method === "efectivo" && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              className="rounded-2xl border border-border bg-white p-5"
+            >
+              <p className="mb-2 text-sm font-medium text-run-blue">Pago en efectivo</p>
+              <div className="mb-4 space-y-1 text-xs text-muted-foreground">
+                <p>Para pagar en efectivo, contacta a nuestros representantes oficiales:</p>
+                <p className="mt-2"><strong>Instagram:</strong> @rotaractesenciaags</p>
+                <p><strong>Teléfono:</strong> 449 980 8124</p>
+                <p className="mt-2">O bien, sube tu comprobante de pago aquí.</p>
               </div>
               <Label className="mb-1.5 block text-sm font-medium">Sube tu comprobante (PDF o imagen)</Label>
               <InputFile onChange={handleReceiptUpload} />

@@ -25,13 +25,6 @@ export function Nav() {
           </span>
           <span className="text-sm">Runnaract 2.0</span>
         </a>
-        <a
-          href="/registro"
-          className="flex items-center justify-center rounded-full bg-run-orange px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white transition hover:brightness-110"
-          style={{ flex: "1 1 0px", maxWidth: "10rem" }}
-        >
-          Inscríbete
-        </a>
       </nav>
     </header>
   );

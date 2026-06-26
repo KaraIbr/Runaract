@@ -23,22 +23,27 @@ export function Countdown() {
   }, []);
 
   return (
-    <div className="grid grid-cols-4 gap-4 sm:gap-8 md:gap-12">
-      <div className={cell}>
-        <span className={num}>{String(t.days).padStart(2, "0")}</span>
-        <span className={lbl}>Días</span>
-      </div>
-      <div className={cell}>
-        <span className={num}>{String(t.hours).padStart(2, "0")}</span>
-        <span className={lbl}>Horas</span>
-      </div>
-      <div className={cell}>
-        <span className={num}>{String(t.minutes).padStart(2, "0")}</span>
-        <span className={lbl}>Minutos</span>
-      </div>
-      <div className={cell}>
-        <span className={num}>{String(t.seconds).padStart(2, "0")}</span>
-        <span className={lbl}>Segundos</span>
+    <div className="flex flex-col items-center gap-6">
+      <span className="text-[11px] uppercase tracking-[0.3em] text-run-blue font-semibold">
+        FALTAN…
+      </span>
+      <div className="grid grid-cols-4 gap-4 sm:gap-8 md:gap-12">
+        <div className={cell}>
+          <span className={num}>{String(t.days).padStart(2, "0")}</span>
+          <span className={lbl}>Días</span>
+        </div>
+        <div className={cell}>
+          <span className={num}>{String(t.hours).padStart(2, "0")}</span>
+          <span className={lbl}>Horas</span>
+        </div>
+        <div className={cell}>
+          <span className={num}>{String(t.minutes).padStart(2, "0")}</span>
+          <span className={lbl}>Minutos</span>
+        </div>
+        <div className={cell}>
+          <span className={num}>{String(t.seconds).padStart(2, "0")}</span>
+          <span className={lbl}>Segundos</span>
+        </div>
       </div>
     </div>
   );

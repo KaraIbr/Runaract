@@ -279,7 +279,7 @@ export type Database = {
     }
     Enums: {
       gender_type: "male" | "female" | "prefer_not_to_say"
-      payment_method_type: "mercadopago" | "transferencia"
+      payment_method_type: "efectivo" | "mercadopago" | "transferencia"
       payment_status_type:
         | "pending"
         | "review"
@@ -415,7 +415,7 @@ export const Constants = {
   public: {
     Enums: {
       gender_type: ["male", "female", "prefer_not_to_say"],
-      payment_method_type: ["mercadopago", "transferencia"],
+      payment_method_type: ["efectivo", "mercadopago", "transferencia"],
       payment_status_type: [
         "pending",
         "review",

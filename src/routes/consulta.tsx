@@ -222,10 +222,10 @@ function ConsultaPage() {
           </motion.div>
         )}
 
-        <footer className="mt-20 border-t border-border pt-8 text-center text-xs text-muted-foreground">
-          © 2026 Runnaract. Todos los derechos reservados.
-        </footer>
+       
       </div>
+    <footer></footer> 
     </div>
+    
   );
 }
