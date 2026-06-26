@@ -182,4 +182,46 @@
     opacity: 0.6;
     text-transform: uppercase;
   }
+
+  .impacto .letter {
+    display: inline-block;
+    position: relative;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--run-blue);
+    transition: transform 0.2s ease-in-out, color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+  }
+
+  @media (width >= 640px) {
+    .impacto .letter { font-size: 1.875rem; }
+  }
+
+  @media (width >= 768px) {
+    .impacto .letter { font-size: 2.25rem; }
+  }
+
+  .impacto .letter::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--run-orange);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+
+  .impacto .letter.wobble::after {
+    transform: scaleX(1);
+    animation: wobble 0.3s infinite;
+  }
+
+  @keyframes wobble {
+    0%, 100% { bottom: -2px; }
+    25%, 75% { bottom: -5px; }
+    50% { bottom: 1px; }
+  }
 }
